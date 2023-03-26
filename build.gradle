@@ -1,0 +1,147 @@
+
+buildscript {
+   
+    repositories {
+        google()
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+        gradlePluginPortal()
+    }
+
+    //dependencies {
+        // https://mvnrepository.com/artifact/gradle.plugin.com.github.johnrengelman/shadow
+        //runtimeOnly group: 'gradle.plugin.com.github.johnrengelman', name: 'shadow', version: '7.1.2'
+    //}
+
+    apply plugin: "scala"
+    //apply plugin: "com.github.johnrengelman.shadow"
+}
+
+/*
+gradle.taskGraph.whenReady {
+    allTasks
+            .filter { it.hasProperty("duplicatesStrategy") } // Because it's some weird decorated wrapper that I can't cast.
+            .forEach {
+                it.setProperty("duplicatesStrategy", "EXCLUDE")
+            }
+}
+*/
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes "Main-Class": "com.codingcrafters.desktop.DesktopLauncher"
+    }
+}
+
+allprojects {
+    apply plugin: "idea"
+
+    version = '1.0'
+    
+    ext {
+        ver = [
+            scala   : '3.2.0'
+        ]
+        appName = "Glass-Egg"
+        gdxVersion = '1.11.0'
+        box2DLightsVersion = '1.5'
+        ashleyVersion = '1.7.4'
+        aiVersion = '1.8.2'
+        scalaVersion = '3.2.0'
+	    artemisVersion = '2.3.0'
+		colorfulVersion = '0.8.4'
+        //enumeratum = '1.5.13'
+    }
+
+    repositories {
+        google()
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        jcenter()
+        gradlePluginPortal()
+    }
+
+    tasks.withType(Copy).all {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}
+
+project(":desktop") {
+    //plugins {
+    //    id("com.github.johnrengelman.shadow") version "8.1.1"
+    //}
+    ext {
+        scalaMajorVersion = '3'
+        scalaVersion = "$scalaMajorVersion.2.0"
+    }
+
+    apply plugin: "java"
+    apply plugin: "scala"
+    
+    dependencies {
+        implementation project(":core")
+        // https://mvnrepository.com/artifact/org.scala-lang/scala3-library
+        implementation group: 'org.scala-lang', name: 'scala3-library_3', version: '3.2.0'
+        //implementation "org.scala-lang:scala3-library:$scalaVersion"
+        //testImplementation "org.scalatest:scalatest_$scalaMajorVersion:3.2.15"
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+		implementation "com.github.tommyettinger:colorful:$colorfulVersion"
+        //implementation "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+        // https://mvnrepository.com/artifact/com.github.plokhotnyuk.jsoniter-scala/jsoniter-scala-core
+        //implementation group: 'com.github.plokhotnyuk.jsoniter-scala', name: 'jsoniter-scala-core_2.13', version: '2.21.4'
+        //implementation "com.github.plokhotnyuk.jsoniter-scala:jsoniter-scala-core_2.13:2.21.4"
+        //implementation "com.github.plokhotnyuk.jsoniter-scala:jsoniter-scala-macros_2.13:2.21.4"
+        //implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-scala_2.13', version: '2.14.2'
+        //compile group: 'com.beachape', name: 'enumeratum-circe_2.13', version: '1.5.22'
+    }
+
+    jar {
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+        manifest {
+            attributes "Main-Class": "com.codingcrafters.desktop.DesktopLauncher"
+        }
+    }
+}
+
+project(":core") {
+    apply plugin: "java"
+    apply plugin: "scala"
+	
+	ext {
+        scalaMajorVersion = '3'
+        scalaVersion = "$scalaMajorVersion.2.0"
+    }
+    
+    dependencies {
+        // https://mvnrepository.com/artifact/org.scala-lang/scala3-library
+        implementation group: 'org.scala-lang', name: 'scala3-library_3', version: '3.2.0'
+        //implementation "org.scala-lang:scala3-library:$scalaVersion"
+        //testImplementation "org.scalatest:scalatest_$scalaMajorVersion:3.2.15"
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        //implementation "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+        //implementation "com.github.plokhotnyuk.jsoniter-scala:jsoniter-scala-core_2.13:2.21.4"
+        //implementation "com.github.plokhotnyuk.jsoniter-scala:jsoniter-scala-macros_2.13:2.21.4"
+        //implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-scala_2.13', version: '2.14.2'
+        //compile group: 'com.beachape', name: 'enumeratum-circe_2.13', version: '1.5.22'
+    }
+
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}

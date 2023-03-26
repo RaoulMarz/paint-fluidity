@@ -1,0 +1,50 @@
+apply plugin: "java"
+apply plugin: "scala"
+
+//plugins {
+//        id("com.github.johnrengelman.shadow") version "7.1.2"
+//}
+
+sourceCompatibility = 1.8
+sourceSets.main.scala.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+project.ext.mainClassName = "com.codingcrafters.desktop.DesktopLauncher"
+project.mainClassName = "com.codingcrafters.desktop.DesktopLauncher"
+
+project.ext.assetsDir = new File("../core/assets");
+configurations.compileOnly.canBeResolved = true
+
+task run(dependsOn: classes, type: JavaExec) {
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+}
+
+task dist(type: Jar) {
+    //canBeResolved = true
+    configurations.implementation.canBeResolved = true
+    from files(sourceSets.main.output.getClassesDirs())
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.implementation.collect {zipTree(it)}}
+    //from files(project.assetsDir);
+ 
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+}
+
+dist.dependsOn classes
+
+task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
+  doLast {
+    def classpath = new XmlParser().parse(file(".classpath"))
+    new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
+    def writer = new FileWriter(file(".classpath"))
+    def printer = new XmlNodePrinter(new PrintWriter(writer))
+    printer.setPreserveWhitespace(true)
+    printer.print(classpath)
+  }
+}
