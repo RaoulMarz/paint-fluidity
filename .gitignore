@@ -15,6 +15,11 @@ Build/
 .bloop
 .bsp
 .gradle
+app/
+target/
 project/project
 project/target
+.metals/
 *~
+.metals/*metals*.db
+*.log
