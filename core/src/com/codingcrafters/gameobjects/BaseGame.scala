@@ -12,26 +12,25 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, TextButton}
 
-/**
- * Created when program is launched;
- * manages the screens that appear during the game.
- */
+/** Created when program is launched; manages the screens that appear during the
+  * game.
+  */
 object BaseGame {
-  /**
-   * Stores reference to game; used when calling setActiveScreen method.
-   */
-  var game : BaseGame = null
+
+  /** Stores reference to game; used when calling setActiveScreen method.
+    */
+  var game: BaseGame = null
   var defaultLabelStyle: Label.LabelStyle = null // BitmapFont + Color
   var titleLabelStyle: Label.LabelStyle = null
   var dialogueLabelStyle: Label.LabelStyle = null
   var infoLabelStyle: Label.LabelStyle = null
 
-  var textButtonStyle: TextButton.TextButtonStyle = null // NPD + BitmapFont + Color
+  var textButtonStyle: TextButton.TextButtonStyle =
+    null // NPD + BitmapFont + Color
 
-  /**
-   * Used to switch screens while game is running.
-   * Method is static to simplify usage.
-   */
+  /** Used to switch screens while game is running. Method is static to simplify
+    * usage.
+    */
   def setActiveScreen(s: BaseScreen): Unit = {
     game.setScreen(s)
   }
@@ -39,26 +38,31 @@ object BaseGame {
 
 abstract class BaseGame()
 
-/**
- * Called when game is initialized; stores global reference to game object.
- */
-  extends Game {
-    BaseGame.game = this
+/** Called when game is initialized; stores global reference to game object.
+  */
+    extends Game {
+  BaseGame.game = this
 
-  /**
-   * Called when game is initialized,
-   * after Gdx.input and other objects have been initialized.
-   */
-  override def create(): Unit = { // prepare for multiple classes/stages/actors to receive discrete input
+  /** Called when game is initialized, after Gdx.input and other objects have
+    * been initialized.
+    */
+  override def create()
+      : Unit = { // prepare for multiple classes/stages/actors to receive discrete input
     val im = new InputMultiplexer
     Gdx.input.setInputProcessor(im)
 
-    var assetFontsPath : String = "fonts"
-    var assetUXPath : String = "ux"
+    var assetFontsPath: String = "fonts"
+    var assetUXPath: String = "ux"
     // parameters for generating a custom bitmap font
-    val fontGeneratorSans = new FreeTypeFontGenerator(Gdx.files.internal(assetFontsPath + "/OpenSans.ttf"))
-    val fontGeneratorRocked = new FreeTypeFontGenerator(Gdx.files.internal(assetFontsPath + "/rocked.ttf"))
-    val fontGeneratorJagged = new FreeTypeFontGenerator(Gdx.files.internal(assetFontsPath + "/JaggedRegular-g2AE.ttf"))
+    val fontGeneratorSans = new FreeTypeFontGenerator(
+      Gdx.files.internal(assetFontsPath + "/OpenSans.ttf")
+    )
+    val fontGeneratorRocked = new FreeTypeFontGenerator(
+      Gdx.files.internal(assetFontsPath + "/rocked.ttf")
+    )
+    val fontGeneratorJagged = new FreeTypeFontGenerator(
+      Gdx.files.internal(assetFontsPath + "/JaggedRegular-g2AE.ttf")
+    )
     val fontParameters = new FreeTypeFontGenerator.FreeTypeFontParameter
     fontParameters.size = 42
     fontParameters.color = Color.WHITE

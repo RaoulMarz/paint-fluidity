@@ -22,47 +22,43 @@ class BaseScreen() extends Screen with InputProcessor {
   var menuMode = false
   private var storeBag: Map[String, String] = Map.empty[String, String]
   private var numberBag: Map[String, Float] = Map.empty[String, Float]
-  private var eventRecordMap: Map[String, EventRecord] = Map.empty[String, EventRecord]
-  private var positionTrackerMap: Map[String, PositionTrack] = Map.empty[String, PositionTrack]
+  private var eventRecordMap: Map[String, EventRecord] =
+    Map.empty[String, EventRecord]
+  private var positionTrackerMap: Map[String, PositionTrack] =
+    Map.empty[String, PositionTrack]
   private var musicPlayers: Map[String, Music] = Map.empty[String, Music]
 
   protected var scene: Scene = new Scene
   protected var mainStage: Stage = new Stage
   protected var uiStage: Stage = new Stage
   protected var uiTable: Table = new Table
-  //protected var screenMusicPlayer = Gdx.audio.newMusic()
+  // protected var screenMusicPlayer = Gdx.audio.newMusic()
   protected var musicDirector: MusicPlayList = new MusicPlayList(assetMusicPath)
   protected var fxAnimations: StaticAnimationStore = new StaticAnimationStore
   uiTable.setFillParent(true)
   uiStage.addActor(uiTable)
   // TODO -- Fix initialize() to run after child class instantiation else instance variables gets called after "initialize"
-  //initialize()
+  // initialize()
   new Thread(new Runnable() {
     override def run(): Unit = {
       val time = System.currentTimeMillis
-      while (System.currentTimeMillis < time + 250) {
-      }
+      while (System.currentTimeMillis < time + 250) {}
       Gdx.app.postRunnable(new Runnable() {
         override def run(): Unit = {
           // Do something on the main thread
-          //myGame.setScreen(postSplashGameScreen)
+          // myGame.setScreen(postSplashGameScreen)
           initialize()
         }
       })
     }
   }).start()
 
+  def initialize(): Unit = {}
 
-  def initialize(): Unit = {
+  def update(dt: Float): Unit = {}
 
-  }
-
-  def update(dt: Float): Unit = {
-
-  }
-
-  def addBagItem(key: String, value : String, replace : Boolean = true): Any = {
-    if ((key != null) && !storeBag.keySet.contains(key) ) {
+  def addBagItem(key: String, value: String, replace: Boolean = true): Any = {
+    if ((key != null) && !storeBag.keySet.contains(key)) {
       storeBag += (key -> value)
     } else if (replace) {
       storeBag -= key
@@ -70,16 +66,16 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def getBagItem(key : String): String = {
-    var result : String = ""
-    if ((key != null) && (storeBag.keySet.contains(key)) )
+  def getBagItem(key: String): String = {
+    var result: String = ""
+    if ((key != null) && (storeBag.keySet.contains(key)))
       result = storeBag(key)
     result
   }
 
-  def getBagItemsMatching(matchFilter : String): ListBuffer[String] = {
-    var result : ListBuffer[String] = null
-    if (!storeBag.isEmpty) {
+  def getBagItemsMatching(matchFilter: String): ListBuffer[String] = {
+    var result: ListBuffer[String] = null
+    if (storeBag.nonEmpty) {
       result = ListBuffer[String]()
       for (key <- storeBag.keySet) {
         if (key.contains(matchFilter))
@@ -95,8 +91,12 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def addPositionTrack(key: String, value : PositionTrack, replace : Boolean = true): Unit = {
-    if ((key != null) && !positionTrackerMap.keySet.contains(key) ) {
+  def addPositionTrack(
+      key: String,
+      value: PositionTrack,
+      replace: Boolean = true
+  ): Unit = {
+    if ((key != null) && !positionTrackerMap.keySet.contains(key)) {
       positionTrackerMap += (key -> value)
     } else if (replace) {
       positionTrackerMap -= key
@@ -104,15 +104,15 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def getPositionTrack(key : String): PositionTrack = {
-    var result : PositionTrack = null
-    if ((key != null) && (positionTrackerMap.keySet.contains(key)) )
+  def getPositionTrack(key: String): PositionTrack = {
+    var result: PositionTrack = null
+    if ((key != null) && (positionTrackerMap.keySet.contains(key)))
       result = positionTrackerMap(key)
     result
   }
 
-  def addNumberItem(key: String, value : Float, replace : Boolean = true): Any = {
-    if ((key != null) && !storeBag.keySet.contains(key) ) {
+  def addNumberItem(key: String, value: Float, replace: Boolean = true): Any = {
+    if ((key != null) && !storeBag.keySet.contains(key)) {
       numberBag += (key -> value)
     } else if (replace) {
       numberBag -= key
@@ -120,9 +120,9 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def getNumberItem(key : String): Float = {
-    var result : Float = 0.0f
-    if ((key != null) && (numberBag.keySet.contains(key)) )
+  def getNumberItem(key: String): Float = {
+    var result: Float = 0.0f
+    if ((key != null) && (numberBag.keySet.contains(key)))
       result = numberBag(key)
     result
   }
@@ -133,8 +133,12 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def addMusicPlayer(key: String, musPlayer: Music, replace : Boolean = true): Any = {
-    if ((key != null) && !musicPlayers.keySet.contains(key) ) {
+  def addMusicPlayer(
+      key: String,
+      musPlayer: Music,
+      replace: Boolean = true
+  ): Any = {
+    if ((key != null) && !musicPlayers.keySet.contains(key)) {
       musicPlayers += (key -> musPlayer)
     } else if (replace) {
       musicPlayers -= key
@@ -142,9 +146,9 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def getMusicPlayer(key : String) : Music = {
-    var result : Music = null
-    if ((key != null) && (musicPlayers.keySet.contains(key)) )
+  def getMusicPlayer(key: String): Music = {
+    var result: Music = null
+    if ((key != null) && (musicPlayers.keySet.contains(key)))
       result = musicPlayers(key)
     result
   }
@@ -155,8 +159,12 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def addEventRecord(key : String, record: EventRecord, replace : Boolean = true): Unit = {
-    if ((key != null) && !eventRecordMap.keySet.contains(key) ) {
+  def addEventRecord(
+      key: String,
+      record: EventRecord,
+      replace: Boolean = true
+  ): Unit = {
+    if ((key != null) && !eventRecordMap.keySet.contains(key)) {
       eventRecordMap += (key -> record)
     } else if (replace) {
       eventRecordMap -= key
@@ -164,9 +172,9 @@ class BaseScreen() extends Screen with InputProcessor {
     }
   }
 
-  def getEventRecord(key : String): EventRecord = {
-    var result : EventRecord = null
-    if ((key != null) && (eventRecordMap.keySet.contains(key)) )
+  def getEventRecord(key: String): EventRecord = {
+    var result: EventRecord = null
+    if ((key != null) && (eventRecordMap.keySet.contains(key)))
       result = eventRecordMap(key)
     result
   }
@@ -195,22 +203,17 @@ class BaseScreen() extends Screen with InputProcessor {
   }
 
   // methods required by Screen interface
-  override def resize(width: Int, height: Int): Unit = {
-  }
+  override def resize(width: Int, height: Int): Unit = {}
 
-  override def pause(): Unit = {
-  }
+  override def pause(): Unit = {}
 
-  override def resume(): Unit = {
-  }
+  override def resume(): Unit = {}
 
-  override def dispose(): Unit = {
-  }
+  override def dispose(): Unit = {}
 
-  /**
-   * Called when this becomes the active screen in a Game.
-   * Set up InputMultiplexer here, in case screen is reactivated at a later time.
-   */
+  /** Called when this becomes the active screen in a Game. Set up
+    * InputMultiplexer here, in case screen is reactivated at a later time.
+    */
   override def show(): Unit = {
     val im = Gdx.input.getInputProcessor.asInstanceOf[InputMultiplexer]
     im.addProcessor(this)
@@ -218,11 +221,10 @@ class BaseScreen() extends Screen with InputProcessor {
     im.addProcessor(mainStage)
   }
 
-  /**
-   * Called when this is no longer the active screen in a Game.
-   * Screen class and Stages no longer process input.
-   * Other InputProcessors must be removed manually.
-   */
+  /** Called when this is no longer the active screen in a Game. Screen class
+    * and Stages no longer process input. Other InputProcessors must be removed
+    * manually.
+    */
   override def hide(): Unit = {
     val im = Gdx.input.getInputProcessor.asInstanceOf[InputMultiplexer]
     im.removeProcessor(this)
@@ -239,12 +241,18 @@ class BaseScreen() extends Screen with InputProcessor {
 
   override def mouseMoved(screenX: Int, screenY: Int) = false
 
-  //override def scrolled(amount: Int) = false
-  override def scrolled(x1 : Float, x2 : Float) : Boolean = false
+  // override def scrolled(amount: Int) = false
+  override def scrolled(x1: Float, x2: Float): Boolean = false
 
-  override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int) = false
+  override def touchDown(
+      screenX: Int,
+      screenY: Int,
+      pointer: Int,
+      button: Int
+  ) = false
 
   override def touchDragged(screenX: Int, screenY: Int, pointer: Int) = false
 
-  override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int) = false
+  override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int) =
+    false
 }

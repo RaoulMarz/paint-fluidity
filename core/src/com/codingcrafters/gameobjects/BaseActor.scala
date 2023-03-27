@@ -73,7 +73,7 @@ object BaseActor { // stores size of game world for all actors
     *   list of instances of the object in stage which extend with the given
     *   class name
     */
-  def getList(stage: Stage, className: String): util.ArrayList[BaseActor] = {
+  private def getList(stage: Stage, className: String): util.ArrayList[BaseActor] = {
     val list = new util.ArrayList[BaseActor]
     var theClass: Class[_] = null
     try
@@ -137,7 +137,7 @@ class BaseActor(val xP: Float, val yP: Float, val s: Stage) extends Group { // c
     * @param y
     *   y-coordinate to center at
     */
-  def centerAtPosition(x: Float, y: Float): Unit = {
+  private def centerAtPosition(x: Float, y: Float): Unit = {
     setPosition(x - getWidth / 2, y - getHeight / 2)
   }
 
@@ -159,7 +159,7 @@ class BaseActor(val xP: Float, val yP: Float, val s: Stage) extends Group { // c
     * @param anim
     *   animation that will be drawn when actor is rendered
     */
-  def setAnimation(anim: Animation[TextureRegion]): Unit = {
+  private def setAnimation(anim: Animation[TextureRegion]): Unit = {
     animation = anim
     val tr = animation.getKeyFrame(0)
     val w = tr.getRegionWidth
@@ -211,8 +211,8 @@ class BaseActor(val xP: Float, val yP: Float, val s: Stage) extends Group { // c
      frameDuration: Float,
      loop: Boolean
   ): Animation[TextureRegion] = {
-    frameWidth = textureArray.get(0).getRegionWidth
-    frameHeight = textureArray.get(0).getRegionHeight
+    frameWidth = textureArray.get(0).getRegionWidth.toFloat
+    frameHeight = textureArray.get(0).getRegionHeight.toFloat
     val anim = new Animation[TextureRegion](frameDuration, textureArray)
     if (loop) anim.setPlayMode(Animation.PlayMode.LOOP)
     else anim.setPlayMode(Animation.PlayMode.NORMAL)

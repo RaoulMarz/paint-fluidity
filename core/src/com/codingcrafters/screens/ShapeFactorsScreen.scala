@@ -79,7 +79,6 @@ class ShapeFactorsScreen extends BaseScreen {
   private var jarBody: Body = null
 
   private var bottleTexture: Texture = null
-  private var bottleSprite: Sprite = null
   private var balloonTexture: Texture = null
   private var balloonModelOrigin: Vector2 = null
   private var balloonSpritesList: scala.Array[Option[Sprite]] = new scala.Array[Option[Sprite]](numberBalloons)
@@ -111,7 +110,7 @@ class ShapeFactorsScreen extends BaseScreen {
     // Create a static body definition
     val groundBodyDef : BodyDef = new BodyDef()
     groundBodyDef.`type` = BodyType.StaticBody
-    groundBodyDef.position.set(0f, -worldBoundHeight /* + 0.2f*/)
+    groundBodyDef.position.set(0f, -worldBoundHeight + halfGroundHeight/*groundWorldHeight*/)
     //groundBodyDef.position.set(halfGroundWidth * 0.5f, worldMetersHeight - halfGroundHeight)
     // Create a body from the definition and add it to the world
     val groundBody : Body = worldBox.createBody(groundBodyDef)
@@ -125,13 +124,20 @@ class ShapeFactorsScreen extends BaseScreen {
     groundBox.dispose()
   }
 
-  private def createFunnelChainShapes(objPlacement : Vector2): Unit = {
+  private def createFunnelChainShapes(objPlacement : Vector2, funnelWidth : Float = 0f): Unit = {
     val chainShape : ChainShape = new ChainShape()
-    val chainVertices : scala.Array[Vector2] = scala.Array(
-      new Vector2(.0f, .0f), new Vector2(1.0f, .0f), new Vector2(0.6f, 1.0f), new Vector2(0.4f, 1.0f)
-      //new Vector2(.0f, .0f), new Vector2(worldMetersWidth, .0f), new Vector2(worldMetersWidth, 1.5f),
-      //new Vector2(6f, 1.5f), new Vector2(3, 5.0f), new Vector2(1.5f, 1.5f), new Vector2(0, 1.5f)
+    var chainVertices : scala.Array[Vector2] = null
+    if (funnelWidth <= 0f) {
+      chainVertices = scala.Array(
+      new Vector2(.0f, .0f),
+      new Vector2(1.0f, .0f), new Vector2(0.6f, 1.0f), new Vector2(0.4f, 1.0f)
     )
+    } else {
+      chainVertices = scala.Array(
+        new Vector2(.0f, .0f),
+        new Vector2(funnelWidth, .0f), new Vector2(0.6f * funnelWidth, funnelWidth), new Vector2(0.4f * funnelWidth, funnelWidth)
+      )
+    }
     chainShape.createLoop(chainVertices)
     val chainBodyDef : BodyDef = new BodyDef()
     chainBodyDef.`type` = BodyType.StaticBody
@@ -178,8 +184,6 @@ class ShapeFactorsScreen extends BaseScreen {
     // Create the collector jar body
     val newJarBody : Body = worldBox.createBody(bd)
     newJarBody.setUserData(false)
-    //jarBody = worldBox.createBody(bd)
-    //jarBody.setUserData(false) // Set to true if it must be destroyed, false means active
 
     loader.attachFixture(newJarBody, "catch-jar", jarFD, COLLECTOR_JAR_WIDTH)
     collectorJarModels.update(jarIdIndex, Some(newJarBody))
@@ -203,8 +207,6 @@ class ShapeFactorsScreen extends BaseScreen {
   private def createPhysicsSprites(): Unit = {
     bottleTexture = new Texture(Gdx.files.internal("data/box2D/ketchup-catcher-jar.png"))
     bottleTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear)
-    bottleSprite = new Sprite(bottleTexture)
-    bottleSprite.setSize(COLLECTOR_JAR_WIDTH, COLLECTOR_JAR_WIDTH * bottleSprite.getHeight / bottleSprite.getWidth)
 
     balloonTexture = new Texture(Gdx.files.internal("data/box2D/balloon.png"))
     balloonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear)
@@ -238,19 +240,18 @@ class ShapeFactorsScreen extends BaseScreen {
   }
 
   private def setupFlowPhysicsObjects(): Unit = {
-    // Create a container body with a polygon shape// Create a container body with a polygon shape
     if (worldBox == null)
       return ()
 
     val worldBoundHeight = worldMetersHeight / 2.0f
-    //val containerSize = new Vector2(worldMetersWidth * 0.55f, worldMetersHeight * 0.125f)
-    //val containerPosition = new Vector2(-(containerSize.x * 0.5f), (worldMetersHeight / 2.0f) - (containerSize.y * 0.525f))
 
     resetPixelDust()
-    createFunnelChainShapes(new Vector2(2.5f, -worldBoundHeight + 1.75f))
-    createCollectorJar(new Vector2(-(worldMetersWidth / 2f) + 1.0f, -worldBoundHeight + 0.9f), 0)
-    createCollectorJar(new Vector2(-(worldMetersWidth / 2f) + 3.8f, -worldBoundHeight + 0.9f), 1)
-    createCollectorJar(new Vector2(-(worldMetersWidth / 2f) + 6.4f, -worldBoundHeight + 1.4f), 2)
+    createFunnelChainShapes(new Vector2(-2.5f, worldBoundHeight - (0.385f * worldMetersHeight)))
+    createFunnelChainShapes(new Vector2(-(worldMetersWidth / 2f), -worldBoundHeight + groundWorldHeight))
+    createFunnelChainShapes(new Vector2( (worldMetersWidth / 2f) - 0.8f, -worldBoundHeight + groundWorldHeight), 0.8f)
+    createCollectorJar(new Vector2(-(worldMetersWidth / 2f) + 0.9f, -worldBoundHeight + groundWorldHeight), 0)
+    createCollectorJar(new Vector2(-(worldMetersWidth / 2f) + 2.9f, -worldBoundHeight + groundWorldHeight), 1)
+    createCollectorJar(new Vector2(-(worldMetersWidth / 2f) + 5.5f, -worldBoundHeight + groundWorldHeight + 0.4f), 2)
     createGround()
     for (ib <- 0 until numberBalloons) {
       createBalloon()
@@ -267,8 +268,8 @@ class ShapeFactorsScreen extends BaseScreen {
       compartmentColors = Some(new scala.Array[Color](5))
       compartmentVolumes.get.update(0, 15)
       compartmentVolumes.get.update(1, 20)
-      compartmentVolumes.get.update(2, 10)
-      compartmentVolumes.get.update(3, 30)
+      compartmentVolumes.get.update(2, 15)
+      compartmentVolumes.get.update(3, 25)
       compartmentVolumes.get.update(4, 25)
       compartmentColors.get.update(0, Color.FIREBRICK)
       compartmentColors.get.update(1, Color.BLUE)
@@ -279,7 +280,7 @@ class ShapeFactorsScreen extends BaseScreen {
   }
 
   private def resetPixelDust() : Unit = {
-    val containerSize = new Vector2(worldMetersWidth * 0.55f, worldMetersHeight * 0.125f)
+    val containerSize = new Vector2(worldMetersWidth * 0.75f, worldMetersHeight * 0.15f)
     val containerPosition = new Vector2(-(containerSize.x * 0.5f), (worldMetersHeight / 2.0f) - (containerSize.y * 0.525f))
 
     val sandDef: BodyDef = new BodyDef()
@@ -359,7 +360,7 @@ class ShapeFactorsScreen extends BaseScreen {
     */
 
     scene.addSegment(
-      new SceneSegment(instructionsSign.get, Actions.moveTo(2f, 150f, 2.5f))
+      new SceneSegment(instructionsSign.get, Actions.moveTo(20f, (appHeight * 0.5f) - 120, 3.0f))
     )
     //scene.addSegment(new SceneSegment(myVectDrawer, Actions.show))
     //scene.addSegment(
@@ -399,7 +400,6 @@ class ShapeFactorsScreen extends BaseScreen {
         if ((jarPos.x >= -worldMetersWidth) && (jarPos.x <= worldMetersWidth) &&
           (jarPos.y >= -worldMetersHeight) && (jarPos.y <= worldMetersHeight) && (jarCollectorSpritesList(i).nonEmpty)) {
           val collectorJarPos : Vector2 = collectorJarModels(i).get.getPosition.sub(collectorJarModelOrigin)
-          //jarCollectorSpritesList(i).get.setPosition(jarPos.x - jarCollectorSpritesList(i).get.getWidth / 2, jarPos.y - jarCollectorSpritesList(i).get.getHeight / 2)
           jarCollectorSpritesList(i).get.setPosition(collectorJarPos.x, collectorJarPos.y)
           jarCollectorSpritesList(i).get.setRotation(collectorJarModels(i).get.getAngle * MathUtils.radiansToDegrees)
         }
@@ -411,7 +411,7 @@ class ShapeFactorsScreen extends BaseScreen {
     batch.setProjectionMatrix(physicsDebugCam.combined)
     batch.begin()
     groundSprite.draw(batch)
-    bottleSprite.draw(batch)
+    //bottleSprite.draw(batch)
     for (ix <- 0 until numberPizelDust) {
       if (pixelDustSprites(ix).nonEmpty)
         pixelDustSprites(ix).get.draw(batch)
