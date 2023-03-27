@@ -156,7 +156,7 @@ class BaseScreen() extends Screen with InputProcessor {
   }
 
   def addEventRecord(key : String, record: EventRecord, replace : Boolean = true): Unit = {
-    if ((key != null) && (eventRecordMap.keySet.contains(key) == false) ) {
+    if ((key != null) && !eventRecordMap.keySet.contains(key) ) {
       eventRecordMap += (key -> record)
     } else if (replace) {
       eventRecordMap -= key
@@ -171,7 +171,7 @@ class BaseScreen() extends Screen with InputProcessor {
     result
   }
 
-  def clearEventRecords() = {
+  def clearEventRecords(): Unit = {
     if (eventRecordMap != null) {
       eventRecordMap.clear()
     }

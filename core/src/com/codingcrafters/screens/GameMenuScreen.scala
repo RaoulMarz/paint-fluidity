@@ -342,7 +342,7 @@ class GameMenuScreen extends BaseScreen {
       clearMusicPlayers()
     }
     //music_Intro.setLooping(true)
-    BaseGame.setActiveScreen(new GamePlayWildWaters/*GameActionScreen()*/)
+    BaseGame.setActiveScreen(new ShapeFactorsScreen/*GameActionScreen()*/)
   }
 
   private def menuActionEvent(keyCode: Int): Unit = {
